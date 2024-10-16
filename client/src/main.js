@@ -1,57 +1,64 @@
-import "./style.css";
+document.addEventListener("DOMContentLoaded", () => {
+  const $app = document.getElementById("app");
 
-const $app = document.querySelector("#app");
+  const $form = document.createElement("form");
+  $form.enctype = "multipart/form-data";
+  $form.className =
+    "space-y-6 p-8 bg-white shadow-lg rounded-lg max-w-md mx-auto";
 
-const $form = document.createElement("form");
+  const $nameInput = document.createElement("input");
+  $nameInput.type = "text";
+  $nameInput.name = "name";
+  $nameInput.placeholder = "Product Name";
+  $nameInput.className =
+    "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-const $input = document.createElement("input");
-$input.name = "productImage"; // ! Aquí va el valor del fieldName de su servidor
-$input.type = "file";
-$input.accept = "image/*";
+  const $descriptionInput = document.createElement("input");
+  $descriptionInput.type = "text";
+  $descriptionInput.name = "description";
+  $descriptionInput.placeholder = "Product Description";
+  $descriptionInput.className =
+    "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-// Mostrar preview de la imagen (Opcional)
-$input.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  const reader = new FileReader();
+  const $priceInput = document.createElement("input");
+  $priceInput.type = "text";
+  $priceInput.name = "price";
+  $priceInput.placeholder = "Product Price";
+  $priceInput.className =
+    "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-  reader.onload = (readerEvent) => {
-    let $img = document.querySelector("img");
+  const $input = document.createElement("input");
+  $input.type = "file";
+  $input.name = "productImage";
+  $input.accept = "image/*";
+  $input.className =
+    "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-    if (!$img) {
-      $img = document.createElement("img");
-    }
+  const $button = document.createElement("button");
+  $button.textContent = "Accept";
+  $button.className =
+    "w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-    $img.src = readerEvent.target.result;
-    $img.style.width = "512px";
-    $app.appendChild($img);
-  };
+  $form.appendChild($nameInput);
+  $form.appendChild($descriptionInput);
+  $form.appendChild($priceInput);
+  $form.appendChild($input);
+  $form.appendChild($button);
 
-  reader.readAsDataURL(file);
-});
+  $app.appendChild($form);
 
-const $button = document.createElement("button");
+  $form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-$button.textContent = "Accept";
-$button.className =
-  "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded";
+    const formData = new FormData(event.target);
 
-$form.appendChild($input);
-
-$form.appendChild($button);
-
-$app.appendChild($form);
-
-$form.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(event.target);
-
-  fetch("http://localhost:4000/uploads", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    });
+    fetch("http://localhost:4000/product", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+  });
 });
